@@ -1,6 +1,6 @@
 [package]
 name = "broom-cli"
-description = "OmniBroom CLI: omni broom scan, sweep, why."
+description = "OmniBroom CLI: omnibroom scan, sweep, why."
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
@@ -11,7 +11,7 @@ name = "broom_cli"
 path = "src/lib.rs"
 
 [[bin]]
-name = "omni"
+name = "omnibroom"
 path = "src/main.rs"
 
 [dependencies]

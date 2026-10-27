@@ -1,4 +1,4 @@
-//! `omni broom sweep`: dry run by default, real deletion only with `--yes`.
+//! `omnibroom sweep`: dry run by default, real deletion only with `--yes`.
 //!
 //! Deletion policy, enforced here and nowhere else in the codebase:
 //! - Only `Verdict::Safe` filesystem findings are ever deleted.

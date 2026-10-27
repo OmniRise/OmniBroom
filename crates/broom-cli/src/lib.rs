@@ -15,10 +15,8 @@ use clap::Parser;
 pub fn run() -> Result<()> {
     let cli = args::Cli::parse();
     match cli.command {
-        args::Command::Broom { command } => match command {
-            args::BroomCommand::Scan(scan) => commands::scan::run(scan),
-            args::BroomCommand::Sweep(sweep) => commands::sweep::run(sweep),
-            args::BroomCommand::Why { path } => commands::why::run(path),
-        },
+        args::Command::Scan(scan) => commands::scan::run(scan),
+        args::Command::Sweep(sweep) => commands::sweep::run(sweep),
+        args::Command::Why { path } => commands::why::run(path),
     }
 }

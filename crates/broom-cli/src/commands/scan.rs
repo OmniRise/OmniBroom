@@ -1,4 +1,4 @@
-//! `omni broom scan`: classified findings with size, category, verdict, and
+//! `omnibroom scan`: classified findings with size, category, verdict, and
 //! reason. `--json` swaps the table for the machine-readable report.
 
 use anyhow::Result;

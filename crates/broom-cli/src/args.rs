@@ -4,7 +4,7 @@ use clap::{Args, Parser, Subcommand};
 
 #[derive(Debug, Parser)]
 #[command(
-    name = "omni",
+    name = "omnibroom",
     version,
     about = "OmniBroom: know what is safe to delete, what is risky, and what to never touch."
 )]
@@ -15,15 +15,6 @@ pub struct Cli {
 
 #[derive(Debug, Subcommand)]
 pub enum Command {
-    /// Disk cleanup: scan, sweep, and why.
-    Broom {
-        #[command(subcommand)]
-        command: BroomCommand,
-    },
-}
-
-#[derive(Debug, Subcommand)]
-pub enum BroomCommand {
     /// Classify findings under paths: size, category, verdict, reason.
     Scan(ScanArgs),
     /// Delete safe findings. Dry run by default; real deletion needs --yes.

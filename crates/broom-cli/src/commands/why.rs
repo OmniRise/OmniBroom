@@ -1,4 +1,4 @@
-//! `omni broom why <path>`: explain any verdict. Runs the same rule packs
+//! `omnibroom why <path>`: explain any verdict. Runs the same rule packs
 //! and facts providers as scan, scoped to one path.
 
 use std::path::PathBuf;
