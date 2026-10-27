@@ -63,10 +63,12 @@ fn collect_repo(repo: &Path, out: &mut ProviderOutcome) {
     };
     let base_short = base.rsplit('/').next().unwrap_or(&base).to_string();
 
-    for worktree in &worktrees {
-        // The main checkout (first entry, path == repo) is where development
-        // happens; only linked worktrees are candidates for removal.
-        if worktree.path == repo {
+    for (index, worktree) in worktrees.iter().enumerate() {
+        // git lists the main worktree first, always. The main checkout is
+        // where development happens: only linked worktrees (index >= 1) are
+        // removal candidates, regardless of which worktree this function was
+        // called from.
+        if index == 0 {
             continue;
         }
         let Some(branch) = worktree.branch.as_deref() else {

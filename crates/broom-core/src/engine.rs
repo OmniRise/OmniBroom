@@ -212,7 +212,10 @@ impl Engine {
             let outcome = provider.collect(&facts_ctx);
             warnings.extend(outcome.warnings);
             for fact in outcome.facts {
-                if fact.path == path {
+                // Exact path, or this path sits inside the fact's path:
+                // the same containment rule the scan's collapse applies, so
+                // `why` on a file inside a risky worktree agrees with scan.
+                if fact.path == path || path.starts_with(&fact.path) {
                     for decision in self.classifier.classify_fact(&fact) {
                         matches.push(WhyMatch {
                             rule_id: decision.rule_id,
