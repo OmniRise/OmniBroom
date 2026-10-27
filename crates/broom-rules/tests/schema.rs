@@ -77,6 +77,34 @@ fn unknown_fact_keys_claim_nothing() {
 }
 
 #[test]
+fn toolchain_node_modules_outrank_the_safe_rule() {
+    // Global installs (~/.local/lib/node_modules, lib/node_modules inside
+    // node distributions) match BOTH the outside-worktree safe rule and the
+    // toolchain rule. The verdict of record must be the riskier one: sweep
+    // only deletes safe findings, and breaking installed CLIs is not safe.
+    let registry = builtin_registry().unwrap();
+    let entry = WalkEntry {
+        path: "/home/u/.local/lib/node_modules".into(),
+        is_dir: true,
+        depth: 4,
+        size_bytes: None,
+    };
+    let ctx = PathContext::default();
+    let decisions = registry.classify_path(&entry, &|| ctx.clone());
+    assert!(
+        decisions
+            .iter()
+            .any(|d| d.rule_id == "node.modules-outside-worktree")
+    );
+    let best = decisions
+        .iter()
+        .max_by_key(|d| d.verdict)
+        .expect("decisions");
+    assert_eq!(best.rule_id, "node.modules-toolchain");
+    assert_eq!(best.verdict, broom_core::Verdict::Risky);
+}
+
+#[test]
 fn invalid_glob_in_pack_reports_rule_id() {
     // TOML parses fine; the failure happens when the glob compiles, and the
     // error must name the offending rule so a pack author can find it.

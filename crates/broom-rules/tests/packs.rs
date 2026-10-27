@@ -16,8 +16,8 @@ fn builtin_packs_all_compile() {
     let mut ids = registry.pack_ids();
     ids.sort_unstable();
     assert_eq!(ids, vec!["docker", "git", "node", "system"]);
-    // docker 3 + node 6 + git 1 + system 5 = 15 v1 rules.
-    assert_eq!(registry.rule_count(), 15);
+    // docker 3 + node 7 + git 1 + system 5 = 16 v1 rules.
+    assert_eq!(registry.rule_count(), 16);
 }
 
 #[test]

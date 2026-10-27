@@ -23,6 +23,13 @@ match = { kind = "name", name = "node_modules" }
 when = { inside_git_worktree = true }
 
 [[rules]]
+id = "node.modules-toolchain"
+category = "node"
+verdict = "risky"
+reason = "Global or bundled toolchain packages: npm -g installs and the node_modules shipped inside node distributions. No lockfile tracks them, so deleting breaks installed CLIs until each one is reinstalled by hand."
+match = { kind = "path_glob", pattern = "**/lib/node_modules" }
+
+[[rules]]
 id = "node.npm-cache"
 category = "node"
 verdict = "safe"
