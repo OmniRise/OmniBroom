@@ -1,0 +1,40 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/broom-core",
+    "crates/broom-rules",
+    "crates/broom-cli",
+    "crates/broom-ffi",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85"
+repository = "https://github.com/OmniRise/OmniBroom"
+
+[workspace.dependencies]
+broom-core = { path = "crates/broom-core" }
+broom-rules = { path = "crates/broom-rules" }
+
+# Engine
+jwalk = "0.8"
+rayon = "1"
+thiserror = "2"
+
+# Serialization and rule data
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+toml = "0.8"
+globset = "0.4"
+dirs = "6"
+
+# CLI surface
+clap = { version = "4", features = ["derive"] }
+indicatif = "0.17"
+comfy-table = "7"
+anyhow = "1"
+
+# Testing
+tempfile = "3"
+insta = "1"

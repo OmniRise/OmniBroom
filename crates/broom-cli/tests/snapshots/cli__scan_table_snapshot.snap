@@ -1,0 +1,17 @@
+---
+source: crates/broom-cli/tests/cli.rs
+expression: rendered
+---
++---------+-----------+----------+---------------------------+-------------+
+| verdict | size      | category | path                      | reason      |
++==========================================================================+
+| safe    | 2.0 MiB   | test     | /home/u/.npm/_cacache     | test reason |
+|---------+-----------+----------+---------------------------+-------------|
+| risky   | 341.8 KiB | test     | /home/u/proj/node_modules | test reason |
+|---------+-----------+----------+---------------------------+-------------|
+| never   | 207.0 MiB | test     | /var/log/journal          | test reason |
+|---------+-----------+----------+---------------------------+-------------|
+| risky   | -         | test     | docker://volume/pg_data   | test reason |
++---------+-----------+----------+---------------------------+-------------+
+
+4 findings: 1 safe (2.0 MiB reclaimable), 2 risky, 1 never (207.0 MiB locked). 4321 entries scanned.

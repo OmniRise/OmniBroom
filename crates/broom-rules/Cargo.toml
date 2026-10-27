@@ -1,0 +1,19 @@
+[package]
+name = "broom-rules"
+description = "OmniBroom rule packs: TOML schema plus built-in v1 packs."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+repository.workspace = true
+
+[dependencies]
+broom-core.workspace = true
+serde.workspace = true
+toml.workspace = true
+globset.workspace = true
+dirs.workspace = true
+thiserror.workspace = true
+
+[dev-dependencies]
+insta.workspace = true
+tempfile.workspace = true

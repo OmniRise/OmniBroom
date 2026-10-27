@@ -1,0 +1,19 @@
+[package]
+name = "broom-ffi"
+description = "UniFFI bindings surface for OmniBroom (stub: compiles, no bindings generated yet)."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+repository.workspace = true
+
+[lib]
+# cdylib so the eventual Kotlin/Swift bindings link against one artifact.
+# rlib stays in the mix so the workspace builds and tests it like any crate.
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+broom-core.workspace = true
+broom-rules.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+uniffi = "0.29"

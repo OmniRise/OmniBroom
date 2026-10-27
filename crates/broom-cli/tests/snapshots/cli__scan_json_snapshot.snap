@@ -1,0 +1,59 @@
+---
+source: crates/broom-cli/tests/cli.rs
+expression: json
+---
+{
+  "roots": [
+    "/fixture"
+  ],
+  "findings": [
+    {
+      "path": "/home/u/.npm/_cacache",
+      "verdict": "safe",
+      "category": "test",
+      "reason": "test reason",
+      "rule_id": "test.rule",
+      "size_bytes": 2100000,
+      "origin": "filesystem"
+    },
+    {
+      "path": "/home/u/proj/node_modules",
+      "verdict": "risky",
+      "category": "test",
+      "reason": "test reason",
+      "rule_id": "test.rule",
+      "size_bytes": 350000,
+      "origin": "filesystem"
+    },
+    {
+      "path": "/var/log/journal",
+      "verdict": "never",
+      "category": "test",
+      "reason": "test reason",
+      "rule_id": "test.rule",
+      "size_bytes": 217040896,
+      "origin": "facts:journalctl"
+    },
+    {
+      "path": "docker://volume/pg_data",
+      "verdict": "risky",
+      "category": "test",
+      "reason": "test reason",
+      "rule_id": "test.rule",
+      "size_bytes": null,
+      "origin": "facts:docker"
+    }
+  ],
+  "warnings": [
+    "docker CLI not found on PATH"
+  ],
+  "entries_visited": 4321,
+  "summary": {
+    "findings": 4,
+    "safe": 1,
+    "risky": 2,
+    "never": 1,
+    "reclaimable_bytes": 2100000,
+    "never_bytes": 217040896
+  }
+}

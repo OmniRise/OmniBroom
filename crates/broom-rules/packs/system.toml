@@ -1,0 +1,42 @@
+# System pack. Everything classified here sits in the never class: journal
+# history is evidence, /tmp is live, WAL files are half-committed databases.
+
+[pack]
+id = "system"
+name = "System"
+description = "Journal logs, /tmp, and WAL files: the never class."
+
+[[rules]]
+id = "system.journal-logs"
+category = "system"
+verdict = "never"
+reason = "Journal logs are the machine's memory of crashes, failed services, and boot history. Deleting them by hand destroys the one record you need during an outage; journalctl --vacuum-size manages retention safely."
+match = { kind = "path_glob", pattern = "/var/log/journal" }
+
+[[rules]]
+id = "system.journal-usage"
+category = "system"
+verdict = "never"
+reason = "Journal logs are the machine's memory of crashes, failed services, and boot history. Deleting them by hand destroys the one record you need during an outage; journalctl --vacuum-size manages retention safely."
+match = { kind = "fact", provider = "journalctl", key = "journal_usage" }
+
+[[rules]]
+id = "system.tmp-live"
+category = "system"
+verdict = "never"
+reason = "/tmp holds sockets, locks, PID files, and X11 targets of processes running right now. Files look abandoned until the service that owns them restarts and finds them gone."
+match = { kind = "path_glob", pattern = "/tmp/*" }
+
+[[rules]]
+id = "system.wal-file"
+category = "system"
+verdict = "never"
+reason = "A WAL file is a database's write-ahead log: committed transactions not yet folded into the main file. Deleting it corrupts the database even when it looks idle."
+match = { kind = "path_glob", pattern = "**/*.wal" }
+
+[[rules]]
+id = "system.sqlite-wal-sidecar"
+category = "system"
+verdict = "never"
+reason = "SQLite writes -wal and -shm sidecars beside the main .sqlite file while a connection is open. The sidecar holds uncommitted pages; removing it silently rolls back or corrupts the database."
+match = { kind = "path_glob", pattern = "**/*-wal" }

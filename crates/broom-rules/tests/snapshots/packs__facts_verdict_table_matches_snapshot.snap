@@ -1,0 +1,11 @@
+---
+source: crates/broom-rules/tests/packs.rs
+expression: table
+---
+never          512B system   scratch.wal [system.wal-file]
+risky             - docker   docker://volume/pg_data [docker.orphaned-volume]
+risky         2048B node     worktree/node_modules [node.modules-in-worktree]
+safe          4096B node     node_modules [node.modules-outside-worktree]
+safe     1300000000B docker   docker://image/aaaa1111bbbb [docker.dangling-image]
+--
+safe=2 risky=2 never=1 reclaimable=1300004096B

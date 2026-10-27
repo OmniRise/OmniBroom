@@ -1,0 +1,51 @@
+# Node ecosystem pack. Everything here is rebuildable output of a package
+# manager: the lockfile plus the registry recreates it byte for byte.
+
+[pack]
+id = "node"
+name = "Node.js"
+description = "node_modules outside active worktrees, npm and pnpm caches, _npx."
+
+[[rules]]
+id = "node.modules-outside-worktree"
+category = "node"
+verdict = "safe"
+reason = "This node_modules sits outside any active git worktree, so no checked-out project is using it right now. The lockfile reinstalls it exactly when the project is opened again."
+match = { kind = "name", name = "node_modules" }
+when = { inside_git_worktree = false }
+
+[[rules]]
+id = "node.modules-in-worktree"
+category = "node"
+verdict = "risky"
+reason = "This node_modules belongs to a checked-out worktree. Deleting it stops offline work until the next install runs, and postinstall scripts may need network access."
+match = { kind = "name", name = "node_modules" }
+when = { inside_git_worktree = true }
+
+[[rules]]
+id = "node.npm-cache"
+category = "node"
+verdict = "safe"
+reason = "npm's download cache holds tarballs it can refetch from the registry. Clearing it never loses project state, it only costs refetch time on the next install."
+match = { kind = "path_glob", pattern = "~/.npm/_cacache", expand_home = true }
+
+[[rules]]
+id = "node.npm-logs"
+category = "node"
+verdict = "safe"
+reason = "npm's per-install debug logs are written only for troubleshooting failed installs. Nothing reads them after that; npm recreates the directory on its next run."
+match = { kind = "path_glob", pattern = "~/.npm/_logs", expand_home = true }
+
+[[rules]]
+id = "node.pnpm-store"
+category = "node"
+verdict = "safe"
+reason = "The pnpm store is a content-addressed cache on a read-only link budget. Removing it loses no project files: pnpm repopulates the store from the registry on demand."
+match = { kind = "path_glob", pattern = "~/.local/share/pnpm/store", expand_home = true }
+
+[[rules]]
+id = "node.npx-cache"
+category = "node"
+verdict = "safe"
+reason = "_npx is the scratch install directory for ephemeral npx runs. Each npx invocation recreates exactly what it needs, so old entries are leftovers of past commands."
+match = { kind = "path_glob", pattern = "~/.npm/_npx", expand_home = true }

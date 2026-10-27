@@ -1,0 +1,18 @@
+[package]
+name = "broom-core"
+description = "OmniBroom engine: parallel walks, verdicts, facts-provider traits."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+repository.workspace = true
+
+[dependencies]
+jwalk.workspace = true
+rayon.workspace = true
+thiserror.workspace = true
+serde.workspace = true
+
+[dev-dependencies]
+serde_json.workspace = true
+tempfile.workspace = true
+insta.workspace = true

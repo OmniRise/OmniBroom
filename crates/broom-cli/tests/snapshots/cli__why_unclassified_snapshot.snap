@@ -1,0 +1,9 @@
+---
+source: crates/broom-cli/tests/cli.rs
+expression: normalized
+---
+path: <TMP>/readme.txt
+exists: yes
+inside git worktree: no
+verdict: unclassified
+No rule claims this path. OmniBroom has no opinion on it, so it was not counted in any sweep.

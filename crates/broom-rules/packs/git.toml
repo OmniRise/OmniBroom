@@ -1,0 +1,14 @@
+# Git worktree pack. Worktrees are cheap to recreate with `git worktree add`,
+# but a worktree that is still referenced or dirty holds work nothing else has.
+
+[pack]
+id = "git"
+name = "Git worktrees"
+description = "Worktrees of merged branches."
+
+[[rules]]
+id = "git.worktree-merged-branch"
+category = "git"
+verdict = "risky"
+reason = "This worktree checks out a branch already merged upstream, so its commits live in main. It is still listed in the parent repo's worktree metadata and may hold uncommitted files: run git worktree remove (never raw rm) after checking git status."
+match = { kind = "fact", provider = "git", key = "merged_worktree" }

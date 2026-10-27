@@ -1,0 +1,29 @@
+# Docker rule pack. Facts come from the CLI's docker provider, which shells
+# out to `docker system df --json` and `docker buildx du`. The rules below only
+# classify what that provider reports: no docker logic lives in code.
+
+[pack]
+id = "docker"
+name = "Docker"
+description = "Dangling images, buildx cache, and orphaned volumes."
+
+[[rules]]
+id = "docker.dangling-image"
+category = "docker"
+verdict = "safe"
+reason = "A dangling image has no tag and no container references it. Rebuilding the same Dockerfile recreates it, and docker system prune would take it anyway."
+match = { kind = "fact", provider = "docker", key = "dangling_image" }
+
+[[rules]]
+id = "docker.buildx-cache"
+category = "docker"
+verdict = "safe"
+reason = "Buildx cache is a speed optimization for future builds. Dropping it costs build minutes, never data: the next build simply starts cold."
+match = { kind = "fact", provider = "docker", key = "buildx_cache" }
+
+[[rules]]
+id = "docker.orphaned-volume"
+category = "docker"
+verdict = "risky"
+reason = "An orphaned volume is referenced by no running container, but volumes exist to hold data someone decided to keep. Check what is inside before pruning it."
+match = { kind = "fact", provider = "docker", key = "orphaned_volume" }

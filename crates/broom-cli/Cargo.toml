@@ -1,0 +1,31 @@
+[package]
+name = "broom-cli"
+description = "OmniBroom CLI: omni broom scan, sweep, why."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+repository.workspace = true
+
+[lib]
+name = "broom_cli"
+path = "src/lib.rs"
+
+[[bin]]
+name = "omni"
+path = "src/main.rs"
+
+[dependencies]
+broom-core.workspace = true
+broom-rules.workspace = true
+clap.workspace = true
+comfy-table.workspace = true
+indicatif.workspace = true
+serde_json.workspace = true
+serde.workspace = true
+anyhow.workspace = true
+dirs.workspace = true
+globset.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true
+insta.workspace = true

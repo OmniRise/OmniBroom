@@ -1,0 +1,30 @@
+# Rust build artifacts
+/target/
+**/*.rs.bk
+*.pdb
+
+# Release staging (cargo-dist lands here later)
+/dist/
+
+# Editor directories and swap files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS cruft
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Tooling caches and coverage output
+.direnv/
+lcov.info
+*.profraw
+*.profdata
