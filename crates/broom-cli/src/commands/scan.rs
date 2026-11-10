@@ -18,8 +18,8 @@ pub fn run(args: ScanArgs) -> Result<()> {
         return Ok(());
     }
 
-    let color = output::colors_enabled();
-    print!("{}", output::render_scan_report(&report, color));
+    let view = super::scan_view(args.top, args.all, args.sort, args.group_by);
+    print!("{}", output::render_scan_report(&report, &view));
     if let Some(warnings) = output::render_warnings(&report) {
         eprint!("{warnings}");
     }

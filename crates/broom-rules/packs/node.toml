@@ -1,6 +1,3 @@
-# Node ecosystem pack. Everything here is rebuildable output of a package
-# manager: the lockfile plus the registry recreates it byte for byte.
-
 [pack]
 id = "node"
 name = "Node.js"

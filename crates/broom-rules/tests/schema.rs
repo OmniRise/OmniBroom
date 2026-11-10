@@ -1,7 +1,3 @@
-//! Unit tests for schema-level behavior that fixtures cannot reach: home
-//! expansion of `~` patterns (must resolve against THIS user's home, not a
-//! fixture), glob compilation, fact-key matching, and condition evaluation.
-
 use broom_core::{Classifier, Fact, PathContext, WalkEntry};
 use broom_rules::{PackRegistry, PackSource, builtin_registry};
 

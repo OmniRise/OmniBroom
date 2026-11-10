@@ -19,6 +19,9 @@ pub struct Summary {
     pub risky: usize,
     pub never: usize,
     pub reclaimable_bytes: u64,
+    /// Measured bytes inside risky findings: shown so "risky" has a size,
+    /// never summed into reclaimable.
+    pub risky_bytes: u64,
     pub never_bytes: u64,
 }
 
@@ -319,7 +322,10 @@ fn summarize(findings: &[Finding]) -> Summary {
                 summary.safe += 1;
                 summary.reclaimable_bytes += finding.size_bytes.unwrap_or(0);
             }
-            Verdict::Risky => summary.risky += 1,
+            Verdict::Risky => {
+                summary.risky += 1;
+                summary.risky_bytes += finding.size_bytes.unwrap_or(0);
+            }
             Verdict::Never => {
                 summary.never += 1;
                 summary.never_bytes += finding.size_bytes.unwrap_or(0);

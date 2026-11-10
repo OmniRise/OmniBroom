@@ -1,5 +1,4 @@
-//! Command implementations: scan, sweep, why. Shared plumbing (roots,
-//! engine construction, progress) lives here.
+//! Command implementations: scan, sweep, why. Shared plumbing (roots, engine construction, progress) lives here.
 
 pub mod scan;
 pub mod sweep;
@@ -76,6 +75,22 @@ impl WalkProgress {
 impl ProgressSink for WalkProgress {
     fn entries_visited(&self, count: u64) {
         self.bar.set_position(count);
+    }
+}
+
+/// The table view a scan invocation asked for: color by tty, limit and
+/// ordering from flags.
+pub fn scan_view(
+    top: Option<usize>,
+    all: bool,
+    sort: crate::output::SortKey,
+    group: Option<crate::output::GroupKey>,
+) -> crate::output::TableView {
+    crate::output::TableView {
+        color: crate::output::colors_enabled(),
+        top: if all { None } else { Some(top.unwrap_or(25)) },
+        sort,
+        group: group.unwrap_or(crate::output::GroupKey::None),
     }
 }
 

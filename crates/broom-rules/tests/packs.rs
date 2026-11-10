@@ -1,8 +1,3 @@
-//! Rule-pack tests: the built-in packs compile, validate, and classify
-//! fixture trees the way the verdict tables promise. Snapshot tests pin the
-//! verdict-per-path table so a rule edit that changes a verdict shows up as
-//! a reviewed snapshot diff, never silently.
-
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
 

@@ -1,19 +1,4 @@
-//! Rule packs for OmniBroom: TOML schema, compiler, and the built-in v1 packs.
-//!
-//! Rules stay data. Nothing in this crate hardcodes verdict logic for docker,
-//! node, git, or system paths: every verdict comes from a TOML file, compiled
-//! once into precompiled glob matchers behind [`broom_core::Classifier`].
-//!
-//! ```text
-//! [[rules]]
-//! id = "node.node_modules-outside-worktree"
-//! category = "node"
-//! verdict = "safe"
-//! reason = "node_modules outside a worktree is pure build output..."
-//! match = { kind = "name", name = "node_modules", dir_only = true }
-//! when = { inside_git_worktree = false }
-//! ```
-
+/// Rule packs for OmniBroom: TOML schema, compiler and the built-in packs
 mod builtin;
 mod pack;
 mod schema;
@@ -26,8 +11,7 @@ pub use schema::{
 
 use thiserror::Error;
 
-/// Failures loading or compiling rule packs. Surfaced by the CLI, never by
-/// the engine mid-scan: packs load once at startup.
+/// Failures loading or compiling rule packs
 #[derive(Debug, Error)]
 pub enum RulesError {
     #[error("could not read rule pack {path}: {source}")]

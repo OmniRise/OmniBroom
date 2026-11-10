@@ -1,6 +1,3 @@
-# Git worktree pack. Worktrees are cheap to recreate with `git worktree add`,
-# but a worktree that is still referenced or dirty holds work nothing else has.
-
 [pack]
 id = "git"
 name = "Git worktrees"

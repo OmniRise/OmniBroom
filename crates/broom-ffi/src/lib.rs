@@ -1,20 +1,5 @@
 //! UniFFI surface for OmniBroom: the stub that exists from day one so the
 //! CLI, future Tauri GUI, and phone apps share one engine.
-//!
-//! What this crate does today:
-//! - compiles as cdylib + rlib with UniFFI scaffolding wired up,
-//! - exports `scan_json`, a synchronous JSON-in/JSON-out entry point that
-//!   phone shells can call without knowing Rust types.
-//!
-//! What it deliberately does not do yet: generate language bindings. That is
-//! a `uniffi-bindgen` step (Kotlin, Swift) run when the phone rung needs it;
-//! wiring it into CI before there is a consumer would be build cost without
-//! a user. No facts providers here either: subprocess facts are the CLI's
-//! job, and shells get pure filesystem classification until their own
-//! provider story exists.
-//!
-//! Async stays out: the engine is sync (no tokio in core), so the FFI is
-//! sync too. Callers thread it themselves.
 
 use std::path::PathBuf;
 use std::sync::Arc;

@@ -14,6 +14,7 @@ use tempfile::TempDir;
 
 use broom_cli::commands::sweep::{execute, plan};
 use broom_cli::output;
+use broom_cli::output::{GroupKey, SortKey, TableView};
 
 fn finding(path: &str, verdict: Verdict, origin: FindingOrigin, size: Option<u64>) -> Finding {
     Finding {
@@ -175,6 +176,7 @@ fn sample_report() -> ScanReport {
     report.summary.safe = 1;
     report.summary.reclaimable_bytes = 2_100_000;
     report.summary.risky = 2;
+    report.summary.risky_bytes = 350_000;
     report.summary.never = 1;
     report.summary.never_bytes = 217_040_896;
     report
@@ -182,7 +184,7 @@ fn sample_report() -> ScanReport {
 
 #[test]
 fn scan_table_snapshot() {
-    let rendered = output::render_scan_report(&sample_report(), false);
+    let rendered = output::render_scan_report(&sample_report(), &TableView::plain());
     insta::assert_snapshot!(rendered);
 }
 
@@ -223,6 +225,89 @@ fn why_unclassified_snapshot() {
     let rendered = output::render_why(&report, false);
     let normalized = rendered.replace(&dir.path().display().to_string(), "<TMP>");
     insta::assert_snapshot!(normalized);
+}
+
+// ---------------------------------------------------------------------------
+// View behavior: limits, sorting, grouping, and the summary bar.
+// ---------------------------------------------------------------------------
+
+#[test]
+fn top_limit_truncates_and_reports_what_is_hidden() {
+    let report = sample_report();
+    let view = TableView {
+        color: false,
+        top: Some(2),
+        sort: SortKey::Size,
+        group: GroupKey::None,
+    };
+    let (rendered, hidden_count, hidden_bytes) =
+        output::render_findings_view(&report.findings, &view);
+    assert_eq!(hidden_count, 2);
+    // The unsized docker volume sorts last; only the node_modules hides.
+    assert_eq!(hidden_bytes, 350_000);
+    // The view stops at rows; the "more" note is the caller's line.
+    assert!(!rendered.contains("not shown"));
+    let full = output::render_scan_report(&report, &view);
+    assert_eq!(
+        full.matches("not shown").count(),
+        1,
+        "exactly one more-line"
+    );
+    assert!(full.contains("… and 2 more finding(s) (341.8 KiB) not shown"));
+    assert!(full.contains("Re-run with --all"));
+}
+
+#[test]
+fn sort_by_verdict_puts_danger_first() {
+    let report = sample_report();
+    let view = TableView {
+        color: false,
+        top: None,
+        sort: SortKey::Verdict,
+        group: GroupKey::None,
+    };
+    let (rendered, _, _) = output::render_findings_view(&report.findings, &view);
+    let journal_pos = rendered.find("/var/log/journal").expect("journal row");
+    let volume_pos = rendered.find("pg_data").expect("volume row");
+    let cacache_pos = rendered.find("_cacache").expect("cache row");
+    assert!(journal_pos < volume_pos, "never rows come before risky");
+    assert!(volume_pos < cacache_pos, "risky rows come before safe");
+}
+
+#[test]
+fn group_by_verdict_renders_labelled_sections() {
+    let report = sample_report();
+    let view = TableView {
+        color: false,
+        top: None,
+        sort: SortKey::Size,
+        group: GroupKey::Verdict,
+    };
+    let (rendered, hidden_count, _) = output::render_findings_view(&report.findings, &view);
+    assert_eq!(hidden_count, 0);
+    assert!(rendered.contains("── never · 1 finding(s) ──"));
+    assert!(rendered.contains("── risky · 2 finding(s) ──"));
+    assert!(rendered.contains("── safe · 1 finding(s) ──"));
+}
+
+#[test]
+fn summary_bar_shares_bytes_across_verdicts() {
+    let rendered = output::render_scan_report(&sample_report(), &TableView::plain());
+    // Three labelled bars, block characters present, locked marker on never.
+    assert!(rendered.contains("safe  "));
+    assert!(rendered.contains("risky "));
+    assert!(rendered.contains("never "));
+    assert!(rendered.contains("█"));
+    assert!(rendered.contains("locked"));
+    // Bars always use the full width: each row has 24 block chars.
+    for line in rendered.lines().filter(|l| {
+        l.trim_start().starts_with("safe")
+            || l.trim_start().starts_with("risky")
+            || l.trim_start().starts_with("never")
+    }) {
+        let blocks = line.matches('█').count() + line.matches('░').count();
+        assert_eq!(blocks, 24, "bar width must be exact: {line}");
+    }
 }
 
 // ---------------------------------------------------------------------------

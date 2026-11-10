@@ -8,8 +8,6 @@ use globset::{Glob, GlobMatcher};
 use crate::RulesError;
 use crate::schema::{MatchSpec, PackSource, RuleCondition, RuleSpec, parse_pack};
 
-/// A pack after compilation: precompiled globs, home paths resolved. This is
-/// the immutable, thread-safe form the engine reads during a scan.
 #[derive(Debug, Clone)]
 pub struct CompiledPack {
     pub id: String,
@@ -45,7 +43,6 @@ pub enum CompiledMatch {
 
 /// Compiles [`PackSource`]s into a [`Classifier`]. Holds everything the engine
 /// needs to classify without touching TOML or the filesystem again.
-///
 /// Cross-pack rule id uniqueness is enforced here, across every pack loaded
 /// together: duplicate ids in JSON output would be a lie about provenance.
 #[derive(Debug)]

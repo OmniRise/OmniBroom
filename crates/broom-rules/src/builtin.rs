@@ -4,12 +4,10 @@ use std::sync::Arc;
 use crate::RulesError;
 use crate::schema::PackSource;
 
-/// Ids of the packs compiled into the binary, in load order.
+/// Ids of the packs compiled into the binary in load order
 pub const BUILTIN_PACK_IDS: [&str; 4] = ["docker", "node", "git", "system"];
 
-/// The built-in v1 packs, read from TOML files at compile time. `include_str!`
-/// keeps the shipped rule set byte-identical to the files in `packs/`: what the
-/// repo says is what the binary classifies with.
+
 pub fn builtin_pack_sources() -> Vec<PackSource> {
     let docker = PackSource::builtin("docker", include_str!("../packs/docker.toml"));
     let node = PackSource::builtin("node", include_str!("../packs/node.toml"));
@@ -18,13 +16,12 @@ pub fn builtin_pack_sources() -> Vec<PackSource> {
     vec![docker, node, git, system]
 }
 
-/// Compile the built-in packs. The entry point every surface starts from.
+/// Compile the built-in packs the entry point every surface starts from
 pub fn builtin_registry() -> Result<Arc<crate::PackRegistry>, RulesError> {
     crate::PackRegistry::compile(builtin_pack_sources())
 }
 
-/// Load every `*.toml` file in `dir`, sorted by file name for determinism.
-/// Lets users add packs without a release; same schema, same validation.
+/// Load every toml file in dir sorted by file name for determinism and lets users add packs without a release
 pub fn load_packs_dir(dir: &PathBuf) -> Result<Vec<PackSource>, RulesError> {
     let mut sources = Vec::new();
     let entries = std::fs::read_dir(dir).map_err(|e| RulesError::Read {

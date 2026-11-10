@@ -1,7 +1,3 @@
-# Docker rule pack. Facts come from the CLI's docker provider, which shells
-# out to `docker system df --json` and `docker buildx du`. The rules below only
-# classify what that provider reports: no docker logic lives in code.
-
 [pack]
 id = "docker"
 name = "Docker"

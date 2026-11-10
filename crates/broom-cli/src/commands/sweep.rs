@@ -1,12 +1,4 @@
 //! `omnibroom sweep`: dry run by default, real deletion only with `--yes`.
-//!
-//! Deletion policy, enforced here and nowhere else in the codebase:
-//! - Only `Verdict::Safe` filesystem findings are ever deleted.
-//! - `Risky` and `Never` findings are never deleted, `--yes` or not.
-//! - Facts findings (docker images, buildx cache, volumes, worktrees) are
-//!   never deleted by this v1: deleting those needs provider-specific
-//!   commands with their own safety rails, which is future work. The dry run
-//!   says so explicitly instead of pretending they are covered.
 
 use std::path::Path;
 
@@ -15,7 +7,7 @@ use anyhow::Result;
 use broom_core::{Finding, FindingOrigin, ScanReport, Verdict};
 
 use crate::args::SweepArgs;
-use crate::output;
+use crate::output::{self, TableView};
 
 /// What a sweep would do, split by policy.
 #[derive(Debug, Default)]
@@ -87,9 +79,18 @@ fn delete_path(path: &Path) -> std::io::Result<()> {
 pub fn run(args: SweepArgs) -> Result<()> {
     let report = super::scan_for_sweep(&args)?;
     let plan = plan(&report);
-    let color = output::colors_enabled();
+    let view = TableView {
+        color: output::colors_enabled(),
+        top: if args.all {
+            None
+        } else {
+            Some(args.top.unwrap_or(25))
+        },
+        sort: output::SortKey::Size,
+        group: output::GroupKey::None,
+    };
 
-    print_plan_header(&plan, color);
+    print_plan_header(&plan, &view);
 
     if !args.yes {
         let dry_run_bytes: u64 = plan.deletable.iter().filter_map(|f| f.size_bytes).sum();
@@ -160,20 +161,25 @@ pub fn run(args: SweepArgs) -> Result<()> {
 }
 
 /// Header: table of deletable items, then counts for everything held back.
-fn print_plan_header(plan: &SweepPlan, color: bool) {
+fn print_plan_header(plan: &SweepPlan, view: &TableView) {
     if plan.deletable.is_empty() && plan.provider_managed.is_empty() {
         println!("No safe findings under the given paths.");
-    } else if !plan.deletable.is_empty() {
+        return;
+    }
+    if !plan.deletable.is_empty() {
         println!("Safe to delete:");
-        print!("{}", output::render_findings_table(&plan.deletable, color));
+        let (table, hidden_count, hidden_bytes) =
+            output::render_findings_view(&plan.deletable, view);
+        print!("{table}");
+        if hidden_count > 0 {
+            print!("{}", output::more_line(hidden_count, hidden_bytes));
+        }
         println!();
     }
     if !plan.provider_managed.is_empty() {
         println!("Safe but provider-managed (reported, not deleted in v1):");
-        print!(
-            "{}",
-            output::render_findings_table(&plan.provider_managed, color)
-        );
+        let (table, _, _) = output::render_findings_view(&plan.provider_managed, view);
+        print!("{table}");
         println!();
     }
 }

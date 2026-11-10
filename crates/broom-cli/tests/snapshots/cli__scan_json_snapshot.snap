@@ -54,6 +54,7 @@ expression: json
     "risky": 2,
     "never": 1,
     "reclaimable_bytes": 2100000,
+    "risky_bytes": 350000,
     "never_bytes": 217040896
   }
 }

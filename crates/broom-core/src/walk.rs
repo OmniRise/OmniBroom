@@ -136,9 +136,7 @@ pub fn walk(
     outcome
 }
 
-/// Sum the sizes of all regular files below `dir`, in parallel. Returns 0 for
-/// a missing or unreadable directory: size is a display concern, a failure to
-/// measure must not fail the scan.
+/// Sum the sizes of all regular files below `dir` in parallel returns 0 for  a missing or unreadable directory
 pub fn dir_size(dir: &Path) -> u64 {
     if !dir.is_dir() {
         return std::fs::symlink_metadata(dir).map(|m| m.len()).unwrap_or(0);

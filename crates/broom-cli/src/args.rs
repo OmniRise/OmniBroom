@@ -2,6 +2,8 @@ use std::path::PathBuf;
 
 use clap::{Args, Parser, Subcommand};
 
+use crate::output::{GroupKey, SortKey};
+
 #[derive(Debug, Parser)]
 #[command(
     name = "omnibroom",
@@ -43,6 +45,22 @@ pub struct ScanArgs {
     /// Maximum directory depth to walk. Default: no limit.
     #[arg(long, value_name = "N")]
     pub max_depth: Option<usize>,
+
+    /// Show only the N rows that sort first (default: 25).
+    #[arg(long, value_name = "N")]
+    pub top: Option<usize>,
+
+    /// Show every finding, overriding --top.
+    #[arg(long)]
+    pub all: bool,
+
+    /// Table sort order. Default: size, biggest first.
+    #[arg(long, value_enum, default_value_t = SortKey::Size)]
+    pub sort: SortKey,
+
+    /// Group rows into labelled sections.
+    #[arg(long, value_enum)]
+    pub group_by: Option<GroupKey>,
 }
 
 #[derive(Debug, Args, Clone)]
@@ -62,4 +80,12 @@ pub struct SweepArgs {
     /// Maximum directory depth to walk. Default: no limit.
     #[arg(long, value_name = "N")]
     pub max_depth: Option<usize>,
+
+    /// Show only the N rows that sort first (default: 25).
+    #[arg(long, value_name = "N")]
+    pub top: Option<usize>,
+
+    /// Show every finding, overriding --top.
+    #[arg(long)]
+    pub all: bool,
 }
